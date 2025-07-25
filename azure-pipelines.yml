@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+  branches:
+    include:
+      - master
 
 pool:
   vmImage: ubuntu-latest
@@ -13,11 +15,14 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script:
-    dotnet build --configuration $(buildConfiguration)
-    echo Test message
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '**/*.csproj'
-  displayName: 'dotnet build $(buildConfiguration)'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(buildConfiguration)'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(buildConfiguration)'
+    
